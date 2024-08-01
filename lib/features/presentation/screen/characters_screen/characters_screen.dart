@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/features/presentation/bloc/character/remote/remote_characters_bloc.dart';
-import 'package:rickandmorty/features/presentation/bloc/character/remote/remote_characters_state.dart';
+import 'package:rickandmorty/features/presentation/bloc/characters/remote/remote_characters_bloc.dart';
+import 'package:rickandmorty/features/presentation/bloc/characters/remote/remote_characters_state.dart';
 
 class CharactersScreen extends StatelessWidget {
   const CharactersScreen({super.key});
