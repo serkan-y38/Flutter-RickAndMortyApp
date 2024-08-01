@@ -1,0 +1,1 @@
+const String rickAndMortyApiBaseUrl  = "https://rickandmortyapi.com/api";
