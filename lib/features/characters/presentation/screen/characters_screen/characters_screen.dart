@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
+import 'package:rickandmorty/core/navigation.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_state.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/widget/list_item.dart';
 
 import '../../bloc/characters/remote/remote_characters_event.dart';
 
@@ -51,6 +51,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
   }
 
   Widget _buildLargeAppBar() {
+    context.read<RemoteCharactersBloc>().add(const LoadMoreCharacters());
     return SliverAppBar.large(
         title: const Text("Characters"),
         actions: <Widget>[
@@ -88,7 +89,12 @@ class _CharactersScreenState extends State<CharactersScreen> {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return _buildListItem(context, state.characters![index]);
+                return CharacterListItemWidget(
+                  characterEntity: state.characters![index],
+                  onListItemClicked: (entity) => Navigator.pushNamed(
+                      context, RouteNavigation.characterDetailsScreen,
+                      arguments: entity),
+                );
               },
               childCount: state.characters!.length,
             ),
@@ -98,78 +104,6 @@ class _CharactersScreenState extends State<CharactersScreen> {
           child: SizedBox(),
         );
       },
-    );
-  }
-
-  Widget _buildListItem(BuildContext context, CharacterEntity entity) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: _buildCircularImage(context: context, url: entity.image!),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                child: Text(
-                  entity.species!,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                child: Text(
-                  entity.name!,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                child: Text(
-                  "${entity.status!} - ${entity.location!.name!}",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCircularImage({
-    required BuildContext context,
-    required String url,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.lightBlue, width: 1),
-      ),
-      child: ClipOval(
-        child: CachedNetworkImage(
-          width: 50,
-          height: 50,
-          imageUrl: url,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              CircularProgressIndicator(value: downloadProgress.progress),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-        ),
-      ),
     );
   }
 }
