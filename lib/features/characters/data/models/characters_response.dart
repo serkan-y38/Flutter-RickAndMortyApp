@@ -1,4 +1,4 @@
-import 'package:rickandmorty/features/domain/entity/character_entity.dart';
+import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 
 class CharactersResponse {
   Info? info;
@@ -69,23 +69,26 @@ class Results {
 
   Results(
       {this.id,
-        this.name,
-        this.status,
-        this.species,
-        this.type,
-        this.gender,
-        this.origin,
-        this.location,
-        this.image,
-        this.episode,
-        this.url,
-        this.created});
+      this.name,
+      this.status,
+      this.species,
+      this.type,
+      this.gender,
+      this.origin,
+      this.location,
+      this.image,
+      this.episode,
+      this.url,
+      this.created});
 
   CharacterEntity toDomain() {
     return CharacterEntity(
       created: created,
       episode: episode,
       gender: gender,
+      origin: OriginAndLocationEntity(name: origin!.name!, url: origin!.url!),
+      location:
+          OriginAndLocationEntity(name: location!.name!, url: location!.url!),
       id: id,
       image: image,
       name: name,
@@ -111,9 +114,8 @@ class Results {
           ? OriginAndLocation.fromJson(json['location'])
           : null,
       image: json['image'] ?? "",
-      episode: json['episode'] != null
-          ? List<String>.from(json['episode'])
-          : null,
+      episode:
+          json['episode'] != null ? List<String>.from(json['episode']) : null,
       url: json['url'] ?? "",
       created: json['created'] ?? "",
     );

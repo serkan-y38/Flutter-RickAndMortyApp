@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:rickandmorty/features/domain/entity/character_entity.dart';
+import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 
 abstract class RemoteCharactersState extends Equatable {
   final List<CharacterEntity>? characters;
@@ -9,7 +9,7 @@ abstract class RemoteCharactersState extends Equatable {
   const RemoteCharactersState({this.characters, this.dioException});
 
   @override
-  List<Object?> get props => [characters!, dioException!];
+  List<Object?> get props => [characters, dioException];
 }
 
 class RemoteCharactersLoading extends RemoteCharactersState {

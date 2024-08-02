@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rickandmorty/di_container.dart';
-import 'package:rickandmorty/features/presentation/bloc/characters/remote/remote_characters_bloc.dart';
-import 'package:rickandmorty/features/presentation/bloc/characters/remote/remote_characters_event.dart';
-import 'package:rickandmorty/features/presentation/screen/characters_screen/characters_screen.dart';
+import 'package:rickandmorty/core/di_container.dart';
+import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_bloc.dart';
+import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_event.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/characters_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
