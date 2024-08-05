@@ -51,7 +51,6 @@ class _CharactersScreenState extends State<CharactersScreen> {
   }
 
   Widget _buildLargeAppBar() {
-    context.read<RemoteCharactersBloc>().add(const LoadMoreCharacters());
     return SliverAppBar.large(
         title: const Text("Characters"),
         actions: <Widget>[
@@ -73,6 +72,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
   }
 
   Widget _buildBody() {
+    context.read<RemoteCharactersBloc>().add(const LoadMoreCharacters());
     return BlocBuilder<RemoteCharactersBloc, RemoteCharactersState>(
       builder: (_, state) {
         if (state is RemoteCharactersLoading) {

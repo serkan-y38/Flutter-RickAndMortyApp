@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/character_details_screen.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/characters_screen.dart';
 
@@ -13,7 +14,9 @@ class RouterClass {
       case RouteNavigation.charactersScreen:
         return MaterialPageRoute(builder: (_) => const CharactersScreen());
       case RouteNavigation.characterDetailsScreen:
-        return MaterialPageRoute(builder: (_) => CharacterDetailsScreen());
+        return MaterialPageRoute(
+            builder: (_) => CharacterDetailsScreen(
+                characterEntity: settings.arguments as CharacterEntity));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
