@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:rickandmorty/core/navigation.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 
 class CharacterDetailsScreen extends StatelessWidget {
@@ -34,7 +35,7 @@ class CharacterDetailsScreen extends StatelessWidget {
                     if (index == 0) {
                       return buildInfoCard();
                     } else if (index == 1) {
-                      return _buildEpisodesList();
+                      return _buildEpisodesList(context);
                     }
                     return null;
                   }, childCount: 2),
@@ -144,7 +145,7 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEpisodesList() {
+  Widget _buildEpisodesList(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
       child: Column(
@@ -164,10 +165,18 @@ class CharacterDetailsScreen extends StatelessWidget {
                   crossAxisCount: 8),
               itemCount: characterEntity.episode!.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                    child: Center(
-                        child: Text(
-                            characterEntity.episode![index].split('/').last)));
+                var episodeId = characterEntity.episode![index]
+                    .split('/')
+                    .last;
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNavigation.episodeScreen,
+                        arguments: episodeId);
+                  },
+                  child: Card(
+                      child: Center(
+                          child: Text(episodeId))),
+                );
               })
         ],
       ),

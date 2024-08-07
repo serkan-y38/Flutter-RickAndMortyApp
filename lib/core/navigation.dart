@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/character_details_screen.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/characters_screen.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/episode_screen/episode_screen.dart';
 
 class RouteNavigation {
   static const String charactersScreen = "charactersScreen";
   static const String characterDetailsScreen = "characterDetailsScreen";
+  static const String episodeScreen = "episodeScreen";
 }
 
 class RouterClass {
@@ -17,6 +19,10 @@ class RouterClass {
         return MaterialPageRoute(
             builder: (_) => CharacterDetailsScreen(
                 characterEntity: settings.arguments as CharacterEntity));
+      case RouteNavigation.episodeScreen:
+        return MaterialPageRoute(
+            builder: (_) =>
+                EpisodeScreen(episodeId: settings.arguments as String));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

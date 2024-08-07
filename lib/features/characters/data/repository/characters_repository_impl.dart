@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:rickandmorty/core/resource.dart';
 import 'package:rickandmorty/features/characters/data/sources/character_api_service/character_api_service.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
+import 'package:rickandmorty/features/characters/domain/entity/episode_entity.dart';
 import 'package:rickandmorty/features/characters/domain/repository/characters_repository.dart';
 
 class CharactersRepositoryImpl implements CharactersRepository {
@@ -25,6 +26,59 @@ class CharactersRepositoryImpl implements CharactersRepository {
             response: res.response,
             type: DioExceptionType.badResponse,
             requestOptions: res.response.requestOptions));
+      }
+    } on DioException catch (e) {
+      return Error(DioException(
+          error: e.error,
+          response: null,
+          type: DioExceptionType.unknown,
+          requestOptions: RequestOptions()));
+    }
+  }
+
+  @override
+  Future<Resource<EpisodeEntity>> getEpisode(String? id) async {
+    try {
+      Loading;
+      final response = await _characterApiService.getEpisode(id: id);
+      if (response.response.statusCode == HttpStatus.ok) {
+        var data = response.data.toDomain();
+        return Success(data);
+      } else {
+        return Error(DioException(
+            error: response.response.statusMessage,
+            response: response.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: response.response.requestOptions));
+      }
+    } on DioException catch (e) {
+      return Error(DioException(
+          error: e.error,
+          response: null,
+          type: DioExceptionType.unknown,
+          requestOptions: RequestOptions()));
+    }
+  }
+
+  @override
+  Future<Resource<List<CharacterEntity>>> getCharactersWithIds(
+      String idList) async {
+    try {
+      Loading;
+      final response =
+          await _characterApiService.getCharactersWithIds(idList: idList);
+      if (response.response.statusCode == HttpStatus.ok) {
+        var data = response.data
+            .map((toElement) => {toElement.toDomain()})
+            .expand((element) => element)
+            .toList();
+        return Success(data);
+      } else {
+        return Error(DioException(
+            error: response.response.statusMessage,
+            response: response.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: response.response.requestOptions));
       }
     } on DioException catch (e) {
       return Error(DioException(
