@@ -5,6 +5,9 @@ import 'package:rickandmorty/features/characters/domain/entity/episode_entity.da
 abstract class CharactersRepository {
   Future<Resource<List<CharacterEntity>>> getCharacters(int? page);
 
+  Future<Resource<List<CharacterEntity>>> searchCharacter(
+      int? page, String? name);
+
   Future<Resource<List<CharacterEntity>>> getCharactersWithIds(String idList);
 
   Future<Resource<EpisodeEntity>> getEpisode(String? id);

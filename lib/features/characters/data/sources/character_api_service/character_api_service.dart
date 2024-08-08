@@ -17,6 +17,12 @@ abstract class CharacterApiService {
     @Query("page") int? page,
   });
 
+  @GET("/character")
+  Future<HttpResponse<CharactersResponse>> searchCharacter({
+    @Query("page") int? page,
+    @Query("name") String? name,
+  });
+
   @GET("/character/{idList}")
   Future<HttpResponse<List<Results>>> getCharactersWithIds({
     @Path("idList") String? idList,

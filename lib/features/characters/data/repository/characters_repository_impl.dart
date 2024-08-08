@@ -37,6 +37,32 @@ class CharactersRepositoryImpl implements CharactersRepository {
   }
 
   @override
+  Future<Resource<List<CharacterEntity>>> searchCharacter(
+      int? page, String? name) async {
+    try {
+      Loading;
+      final res =
+          await _characterApiService.searchCharacter(page: page, name: name);
+      if (res.response.statusCode == HttpStatus.ok) {
+        var data = res.data.results?.map((e) => e.toDomain()).toList();
+        return Success(data ?? []);
+      } else {
+        return Error(DioException(
+            error: res.response.statusMessage,
+            response: res.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: res.response.requestOptions));
+      }
+    } on DioException catch (e) {
+      return Error(DioException(
+          error: e.error,
+          response: null,
+          type: DioExceptionType.unknown,
+          requestOptions: RequestOptions()));
+    }
+  }
+
+  @override
   Future<Resource<EpisodeEntity>> getEpisode(String? id) async {
     try {
       Loading;
