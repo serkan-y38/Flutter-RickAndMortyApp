@@ -1,62 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rickandmorty/core/navigation.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
+import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_bloc.dart';
+import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_event.dart';
+import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_state.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/episode_list.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/info_card.dart';
+import '../../../../../core/di_container.dart';
 
-class CharacterDetailsScreen extends StatelessWidget {
+class CharacterDetailsScreen extends StatefulWidget {
   const CharacterDetailsScreen({super.key, required this.characterEntity});
 
   final CharacterEntity characterEntity;
 
   @override
+  State<CharacterDetailsScreen> createState() => _CharacterDetailsScreenState();
+}
+
+class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
+
+  @override
   Widget build(BuildContext context) {
+    return BlocProvider<LocalCharactersBloc>(
+      create: (context) =>
+          singleton()..add(IsCharacterSaved(widget.characterEntity.id!)),
+      child: BlocBuilder<LocalCharactersBloc, LocalCharactersState>(
+        builder: (_, state) {
+          bool isCharacterSaved = false;
+          if (state is IsCharacterSavedResultSuccess && state.result != null) {
+            isCharacterSaved = state.result!;
+          }
+          return _buildScaffold(isCharacterSaved);
+        },
+      ),
+    );
+  }
+
+  Widget _buildScaffold(bool isCharacterSaved) {
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: _buildAppBar())
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: _buildAppBar(isCharacterSaved),
+            ),
           ];
         },
-        body: Builder(builder: (BuildContext context) {
-          return CustomScrollView(
-            key: const PageStorageKey<String>(""),
-            slivers: <Widget>[
-              SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
-              SliverPadding(
-                padding: const EdgeInsets.all(0),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                    if (index == 0) {
-                      return buildInfoCard();
-                    } else if (index == 1) {
-                      return _buildEpisodesList(context);
-                    }
-                    return null;
-                  }, childCount: 2),
-                ),
-              ),
-            ],
-          );
-        }),
+        body: Builder(
+          builder: (BuildContext context) {
+            return _buildBody();
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(bool isCharacterSaved) {
     return SliverAppBar(
       expandedHeight: 350,
       floating: false,
       pinned: true,
+      actions: <Widget>[
+        Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                if (isCharacterSaved) {
+                  context
+                      .read<LocalCharactersBloc>()
+                      .add(DeleteCharacter(widget.characterEntity));
+                } else {
+                  context
+                      .read<LocalCharactersBloc>()
+                      .add(InsertCharacter(widget.characterEntity));
+                }
+                // Trigger a new state to rebuild the UI with the updated saved status
+                context
+                    .read<LocalCharactersBloc>()
+                    .add(IsCharacterSaved(widget.characterEntity.id!));
+              },
+              icon: Icon(isCharacterSaved
+                  ? Icons.bookmark_remove
+                  : Icons.bookmark_add),
+            );
+          },
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(characterEntity.name!),
+        title: Text(widget.characterEntity.name!),
         background: CachedNetworkImage(
-          imageUrl: characterEntity.image!,
+          imageUrl: widget.characterEntity.image!,
           imageBuilder: (context, imageProvider) => Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -78,108 +114,40 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget buildInfoCard() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const Text("Species"),
-                      Text(characterEntity.species!)
+  Widget _buildBody() {
+    return CustomScrollView(
+      key: const PageStorageKey<String>(""),
+      slivers: <Widget>[
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(0),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                if (index == 0) {
+                  return Column(
+                    children: [
+                      buildInfoCard(widget.characterEntity),
                     ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        const Text("Status"),
-                        Text(characterEntity.status!)
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const Text("Gender"),
-                      Text(characterEntity.gender!)
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        const Text("Origin"),
-                        Text(characterEntity.origin!.name!)
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const Text("Location"),
-                      Text(characterEntity.location!.name!)
-                    ],
-                  )
-                ],
-              ),
+                  );
+                } else if (index == 1) {
+                  return buildEpisodesList(
+                      context, widget.characterEntity.episode!,
+                      onItemClicked: (episodeId) => Navigator.pushNamed(
+                            context,
+                            RouteNavigation.episodeScreen,
+                            arguments: episodeId,
+                          ));
+                }
+                return null;
+              },
+              childCount: 2,
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildEpisodesList(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Card(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text("Episodes"),
-            ),
-          ),
-          GridView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 8),
-              itemCount: characterEntity.episode!.length,
-              itemBuilder: (BuildContext context, int index) {
-                var episodeId = characterEntity.episode![index]
-                    .split('/')
-                    .last;
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteNavigation.episodeScreen,
-                        arguments: episodeId);
-                  },
-                  child: Card(
-                      child: Center(
-                          child: Text(episodeId))),
-                );
-              })
-        ],
-      ),
     );
   }
 }

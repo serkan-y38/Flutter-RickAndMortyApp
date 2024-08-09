@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/features/characters/domain/use_case/get_characters_with_ids_use_case.dart';
+import 'package:rickandmorty/features/characters/domain/use_case/remote/get_characters_with_ids_use_case.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters_with_ids/remote/remote_characters_with_ids_event.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters_with_ids/remote/remote_characters_with_ids_state.dart';
 import '../../../../../../core/resource.dart';

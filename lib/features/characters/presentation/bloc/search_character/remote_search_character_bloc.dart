@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/features/characters/domain/use_case/search_character_use_case.dart';
+import 'package:rickandmorty/features/characters/domain/use_case/remote/search_character_use_case.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/search_character/remote_search_character_event.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/search_character/remote_search_character_state.dart';
 

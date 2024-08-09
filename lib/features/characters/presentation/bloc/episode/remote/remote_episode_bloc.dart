@@ -4,7 +4,7 @@ import 'package:rickandmorty/features/characters/presentation/bloc/episode/remot
 import 'package:rickandmorty/features/characters/presentation/bloc/episode/remote/remote_episode_state.dart';
 
 import '../../../../domain/entity/episode_entity.dart';
-import '../../../../domain/use_case/get_episode_use_case.dart';
+import '../../../../domain/use_case/remote/get_episode_use_case.dart';
 
 class RemoteEpisodeBloc extends Bloc<RemoteEpisodeEvent, RemoteEpisodeState> {
   final GetEpisodeUseCase _getEpisodeUseCase;

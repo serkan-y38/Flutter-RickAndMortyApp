@@ -2,15 +2,18 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:rickandmorty/core/resource.dart';
-import 'package:rickandmorty/features/characters/data/sources/character_api_service/character_api_service.dart';
+import 'package:rickandmorty/features/characters/data/models/local/character_model.dart';
+import 'package:rickandmorty/features/characters/data/sources/local/app_database.dart';
+import 'package:rickandmorty/features/characters/data/sources/remote/character_api_service/character_api_service.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 import 'package:rickandmorty/features/characters/domain/entity/episode_entity.dart';
 import 'package:rickandmorty/features/characters/domain/repository/characters_repository.dart';
 
 class CharactersRepositoryImpl implements CharactersRepository {
   final CharacterApiService _characterApiService;
+  final AppDatabase _appDatabase;
 
-  CharactersRepositoryImpl(this._characterApiService);
+  CharactersRepositoryImpl(this._characterApiService, this._appDatabase);
 
   @override
   Future<Resource<List<CharacterEntity>>> getCharacters(int? page) async {
@@ -113,5 +116,37 @@ class CharactersRepositoryImpl implements CharactersRepository {
           type: DioExceptionType.unknown,
           requestOptions: RequestOptions()));
     }
+  }
+
+  @override
+  Future<void> deleteCharacter(CharacterEntity entity) {
+    return _appDatabase.characterDao
+        .deleteCharacter(CharacterModel.toData(entity));
+  }
+
+  @override
+  Future<void> insertCharacter(CharacterEntity entity) {
+    return _appDatabase.characterDao
+        .insertCharacter(CharacterModel.toData(entity));
+  }
+
+  @override
+  Future<Resource<List<CharacterEntity>>> getSavedCharacters() async {
+    try {
+      Loading;
+      final res = await _appDatabase.characterDao.getSavedCharacters();
+      return Success(res.map((e) => e.toDomain()).toList());
+    } on DioException catch (e) {
+      return Error(DioException(
+          error: e.error,
+          response: null,
+          type: DioExceptionType.unknown,
+          requestOptions: RequestOptions()));
+    }
+  }
+
+  @override
+  Future<bool?> isCharacterSaved(int id) {
+    return _appDatabase.characterDao.isCharacterSaved(id);
   }
 }

@@ -2,7 +2,7 @@ import 'package:rickandmorty/core/resource.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_event.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/features/characters/domain/use_case/get_characters_use_case.dart';
+import 'package:rickandmorty/features/characters/domain/use_case/remote/get_characters_use_case.dart';
 
 import '../../../../domain/entity/character_entity.dart';
 
@@ -20,7 +20,7 @@ class RemoteCharactersBloc extends Bloc<RemoteCharactersEvent, RemoteCharactersS
 
   void onGetCharacters(GetCharacters event, Emitter<RemoteCharactersState> emitter) async {
     pageNumber = 0;
-    _characterIds.clear(); // Clear the set for a fresh load
+    _characterIds.clear();
     final dataState = await _getCharactersUseCase(params: pageNumber);
     if (dataState is Success<List<CharacterEntity>> && dataState.data!.isNotEmpty) {
       _updateCharactersState(dataState, emitter);
