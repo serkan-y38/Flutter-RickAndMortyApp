@@ -3,11 +3,13 @@ import 'package:rickandmorty/features/characters/domain/entity/character_entity.
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/character_details_screen.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/characters_screen.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/episode_screen/episode_screen.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/saved_characters_screen/saved_characters_screen.dart';
 
 class RouteNavigation {
   static const String charactersScreen = "charactersScreen";
   static const String characterDetailsScreen = "characterDetailsScreen";
   static const String episodeScreen = "episodeScreen";
+  static const String savedCharactersScreen = "savedCharactersScreen";
 }
 
 class RouterClass {
@@ -23,6 +25,8 @@ class RouterClass {
         return MaterialPageRoute(
             builder: (_) =>
                 EpisodeScreen(episodeId: settings.arguments as String));
+      case RouteNavigation.savedCharactersScreen:
+        return MaterialPageRoute(builder: (_) => const SavedCharactersScreen());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

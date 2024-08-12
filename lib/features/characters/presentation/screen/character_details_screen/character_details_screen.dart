@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rickandmorty/core/navigation.dart';
+import 'package:rickandmorty/core/snack_bar.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
-import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_bloc.dart';
-import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_event.dart';
-import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_state.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/episode_list.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/info_card.dart';
 import '../../../../../core/di_container.dart';
+import '../../bloc/characters/local/local_characters_bloc.dart';
+import '../../bloc/characters/local/local_characters_event.dart';
+import '../../bloc/characters/local/local_characters_state.dart';
 
 class CharacterDetailsScreen extends StatefulWidget {
   const CharacterDetailsScreen({super.key, required this.characterEntity});
@@ -16,11 +17,10 @@ class CharacterDetailsScreen extends StatefulWidget {
   final CharacterEntity characterEntity;
 
   @override
-  State<CharacterDetailsScreen> createState() => _CharacterDetailsScreenState();
+  State<StatefulWidget> createState() => _CharacterDetailsScreen();
 }
 
-class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
-
+class _CharacterDetailsScreen extends State<CharacterDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LocalCharactersBloc>(
@@ -44,21 +44,46 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: _buildAppBar(isCharacterSaved),
-            ),
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: _buildAppBar(context, isCharacterSaved))
           ];
         },
-        body: Builder(
-          builder: (BuildContext context) {
-            return _buildBody();
-          },
-        ),
+        body: Builder(builder: (BuildContext context) {
+          return CustomScrollView(
+            key: const PageStorageKey<String>(""),
+            slivers: <Widget>[
+              SliverOverlapInjector(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+              SliverPadding(
+                padding: const EdgeInsets.all(0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                    if (index == 0) {
+                      return buildInfoCard(widget.characterEntity);
+                    } else if (index == 1) {
+                      return buildEpisodesList(
+                          context, widget.characterEntity.episode!,
+                          onItemClicked: (episodeId) => Navigator.pushNamed(
+                                context,
+                                RouteNavigation.episodeScreen,
+                                arguments: episodeId,
+                              ));
+                    }
+                    return null;
+                  }, childCount: 2),
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildAppBar(bool isCharacterSaved) {
+  Widget _buildAppBar(BuildContext context, bool isCharacterSaved) {
     return SliverAppBar(
       expandedHeight: 350,
       floating: false,
@@ -72,10 +97,18 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
                   context
                       .read<LocalCharactersBloc>()
                       .add(DeleteCharacter(widget.characterEntity));
+                  showSnackBar(context, "Character deleted", "Undo",
+                      onActionPressed: (_) {
+                    // TODO
+                  });
                 } else {
                   context
                       .read<LocalCharactersBloc>()
                       .add(InsertCharacter(widget.characterEntity));
+                  showSnackBar(context, "Character saved", "Undo",
+                      onActionPressed: (_) {
+                    // TODO
+                  });
                 }
                 // Trigger a new state to rebuild the UI with the updated saved status
                 context
@@ -111,43 +144,6 @@ class _CharacterDetailsScreenState extends State<CharacterDetailsScreen> {
               const Center(child: Icon(Icons.error)),
         ),
       ),
-    );
-  }
-
-  Widget _buildBody() {
-    return CustomScrollView(
-      key: const PageStorageKey<String>(""),
-      slivers: <Widget>[
-        SliverOverlapInjector(
-          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.all(0),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      buildInfoCard(widget.characterEntity),
-                    ],
-                  );
-                } else if (index == 1) {
-                  return buildEpisodesList(
-                      context, widget.characterEntity.episode!,
-                      onItemClicked: (episodeId) => Navigator.pushNamed(
-                            context,
-                            RouteNavigation.episodeScreen,
-                            arguments: episodeId,
-                          ));
-                }
-                return null;
-              },
-              childCount: 2,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

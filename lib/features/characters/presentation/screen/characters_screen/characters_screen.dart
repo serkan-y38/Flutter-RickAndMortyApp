@@ -62,7 +62,8 @@ class _CharactersScreenState extends State<CharactersScreen> {
             icon: const Icon(Icons.bookmark_border),
             tooltip: 'Saved characters',
             onPressed: () {
-              // TODO
+              Navigator.pushNamed(
+                  context, RouteNavigation.savedCharactersScreen);
             },
           ),
           IconButton(
