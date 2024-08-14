@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/core/navigation.dart';
+import 'package:rickandmorty/core/navigation/navigation.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_event.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/local/local_characters_state.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/widget/list_item.dart';
-import '../../../../../core/di_container.dart';
+import '../../../../../core/di/di_container.dart';
 
 class SavedCharactersScreen extends StatelessWidget {
   const SavedCharactersScreen({super.key});

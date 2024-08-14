@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'list_item.dart';
 
 class CharactersListWidget extends StatelessWidget {
-
   final List<CharacterEntity>? characters;
   final void Function(CharacterEntity entity)? onListItemClicked;
 
@@ -16,7 +15,7 @@ class CharactersListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           return CharacterListItemWidget(
               characterEntity: characters![index],
               onListItemClicked: onListItemClicked);
@@ -25,5 +24,4 @@ class CharactersListWidget extends StatelessWidget {
       ),
     );
   }
-
 }

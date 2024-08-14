@@ -9,8 +9,8 @@ import 'package:rickandmorty/features/characters/presentation/bloc/characters_wi
 import 'package:rickandmorty/features/characters/presentation/bloc/episode/remote/remote_episode_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/episode/remote/remote_episode_event.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/episode/remote/remote_episode_state.dart';
-import '../../../../../core/di_container.dart';
-import '../../../../../core/navigation.dart';
+import '../../../../../core/di/di_container.dart';
+import '../../../../../core/navigation/navigation.dart';
 
 class EpisodeScreen extends StatelessWidget {
   const EpisodeScreen({super.key, this.episodeId});

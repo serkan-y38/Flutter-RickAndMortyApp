@@ -17,12 +17,20 @@ import 'package:rickandmorty/features/characters/presentation/bloc/characters/re
 import 'package:rickandmorty/features/characters/presentation/bloc/characters_with_ids/remote/remote_characters_with_ids_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/episode/remote/remote_episode_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/search_character/remote_search_character_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../features/characters/presentation/bloc/theme/theme_bloc.dart';
 
 final singleton = GetIt.instance;
 
 Future<void> initializeDependencies() async {
+
+  final preference = await SharedPreferences.getInstance();
+
+  singleton.registerSingleton<ThemeBloc>(ThemeBloc(preference));
+
   final localDatabase =
-      await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  await $FloorAppDatabase.databaseBuilder('app_database.db').build();
 
   singleton.registerSingleton<AppDatabase>(localDatabase);
 
@@ -59,16 +67,16 @@ Future<void> initializeDependencies() async {
       IsCharacterSavedUseCase(singleton()));
 
   singleton.registerFactory<RemoteCharactersBloc>(
-      () => RemoteCharactersBloc(singleton()));
+          () => RemoteCharactersBloc(singleton()));
 
   singleton
       .registerFactory<RemoteEpisodeBloc>(() => RemoteEpisodeBloc(singleton()));
 
   singleton.registerFactory<RemoteCharactersWithIdsBloc>(
-      () => RemoteCharactersWithIdsBloc(singleton()));
+          () => RemoteCharactersWithIdsBloc(singleton()));
 
   singleton.registerFactory<RemoteSearchCharacterBloc>(
-      () => RemoteSearchCharacterBloc(singleton()));
+          () => RemoteSearchCharacterBloc(singleton()));
 
   singleton.registerFactory<LocalCharactersBloc>(() =>
       LocalCharactersBloc(singleton(), singleton(), singleton(), singleton()));

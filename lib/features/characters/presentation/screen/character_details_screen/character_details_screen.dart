@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/core/navigation.dart';
+import 'package:rickandmorty/core/navigation/navigation.dart';
 import 'package:rickandmorty/core/snack_bar.dart';
 import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/episode_list.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/character_details_screen/widget/info_card.dart';
-import '../../../../../core/di_container.dart';
+import '../../../../../core/di/di_container.dart';
 import '../../bloc/characters/local/local_characters_bloc.dart';
 import '../../bloc/characters/local/local_characters_event.dart';
 import '../../bloc/characters/local/local_characters_state.dart';

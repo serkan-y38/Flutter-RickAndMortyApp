@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rickandmorty/core/navigation.dart';
+import 'package:rickandmorty/core/navigation/navigation.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_bloc.dart';
 import 'package:rickandmorty/features/characters/presentation/bloc/characters/remote/remote_characters_state.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/widget/characters_list.dart';
+import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/widget/drawer_list.dart';
 import 'package:rickandmorty/features/characters/presentation/screen/characters_screen/widget/search_character_delegate.dart';
-import '../../../../../core/di_container.dart';
+import '../../../../../core/di/di_container.dart';
 import '../../bloc/characters/remote/remote_characters_event.dart';
 import '../../bloc/search_character/remote_search_character_bloc.dart';
 
@@ -34,22 +35,27 @@ class _CharactersScreenState extends State<CharactersScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.atEdge) {
-      bool isBottom = _scrollController.position.pixels != 0;
-      if (isBottom) {
-        context.read<RemoteCharactersBloc>().add(const LoadMoreCharacters());
-      }
+    if (_scrollController.position.atEdge &&
+        _scrollController.position.pixels != 0) {
+      context.read<RemoteCharactersBloc>().add(const LoadMoreCharacters());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Scaffold(
-        body: CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[_buildLargeAppBar(), _buildBody()],
-        ),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[_buildLargeAppBar(), _buildBody()],
+      ),
+      drawer: Drawer(
+        child: drawerList(context, onSettingsClicked: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(context, RouteNavigation.settingsScreen);
+        }, onShareClicked: () {
+          Navigator.pop(context);
+          // TODO
+        }),
       ),
     );
   }

@@ -55,12 +55,12 @@ class CharacterListItemWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Divider(
                     height: 1,
                     thickness: 1,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -78,7 +78,8 @@ class CharacterListItemWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(width: 1),
+        border: Border.all(
+            width: 1, color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       child: ClipOval(
         child: CachedNetworkImage(
@@ -86,7 +87,11 @@ class CharacterListItemWidget extends StatelessWidget {
           height: 50,
           imageUrl: url,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
-              CircularProgressIndicator(value: downloadProgress.progress),
+              CircularProgressIndicator(
+            value: downloadProgress.progress,
+            color: Theme.of(context).colorScheme.primary,
+            strokeWidth: 4,
+          ),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ),

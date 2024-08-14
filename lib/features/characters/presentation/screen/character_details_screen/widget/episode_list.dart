@@ -1,8 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rickandmorty/features/characters/domain/entity/character_entity.dart';
-
-import '../../../../../../core/navigation.dart';
 
 Widget buildEpisodesList(BuildContext context, List<String> episodes,
     {required Function(String) onItemClicked}) {
