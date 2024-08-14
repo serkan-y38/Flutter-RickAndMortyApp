@@ -10,13 +10,14 @@ import 'list_item.dart';
 
 class SearchCharacterDelegate extends SearchDelegate<CharacterEntity> {
   final Bloc<RemoteSearchCharacterEvent, RemoteSearchCharacterState> searchBloc;
-  final _controller = ScrollController();
+  final ScrollController _controller = ScrollController();
 
   String currentQuery = "";
 
   SearchCharacterDelegate(this.searchBloc) {
     _controller.addListener(() {
-      if (_controller.position.atEdge && _controller.position.pixels == 0) {
+      if (_controller.position.pixels >= _controller.position.maxScrollExtent &&
+          !_controller.position.outOfRange) {
         searchBloc.add(LoadMoreSearchCharacter(currentQuery));
       }
     });
@@ -76,9 +77,12 @@ class SearchCharacterDelegate extends SearchDelegate<CharacterEntity> {
   }
 
   Widget _buildResultList(String query) {
-    currentQuery = query;
-    searchBloc.add(SearchCharacters(query));
-    searchBloc.add(LoadMoreSearchCharacter(currentQuery));
+    if (query != currentQuery) {
+      currentQuery = query;
+      searchBloc.add(SearchCharacters(query));
+      searchBloc.add(LoadMoreSearchCharacter(query));
+    }
+
     return BlocBuilder(
       bloc: searchBloc,
       builder: (context, state) {
@@ -90,15 +94,16 @@ class SearchCharacterDelegate extends SearchDelegate<CharacterEntity> {
         }
         if (state is RemoteSearchCharacterSuccess) {
           return ListView.builder(
-              controller: _controller,
-              itemCount: state.characters!.length,
-              itemBuilder: (context, index) {
-                return CharacterListItemWidget(
-                    onListItemClicked: (entity) => Navigator.pushNamed(
-                        context, RouteNavigation.characterDetailsScreen,
-                        arguments: entity),
-                    characterEntity: state.characters![index]);
-              });
+            controller: _controller,
+            itemCount: state.characters!.length,
+            itemBuilder: (context, index) {
+              return CharacterListItemWidget(
+                  onListItemClicked: (entity) => Navigator.pushNamed(
+                      context, RouteNavigation.characterDetailsScreen,
+                      arguments: entity),
+                  characterEntity: state.characters![index]);
+            },
+          );
         }
         return const SizedBox();
       },
